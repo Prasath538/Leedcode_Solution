@@ -1,23 +1,29 @@
-class Solution {
-    public String longestPalindrome(String s) {
-        int n = s.length();
-        boolean[][] f = new boolean[n][n];
-        for (var g : f) {
-            Arrays.fill(g, true);
-        }
-        int k = 0, mx = 1;
-        for (int i = n - 2; i >= 0; --i) {
-            for (int j = i + 1; j < n; ++j) {
-                f[i][j] = false;
-                if (s.charAt(i) == s.charAt(j)) {
-                    f[i][j] = f[i + 1][j - 1];
-                    if (f[i][j] && mx < j - i + 1) {
-                        mx = j - i + 1;
-                        k = i;
-                    }
-                }
+ublic class LongestPalindromeSubstring {
+    public static String longestPalindrome(String s) {
+        if (s == null || s.length() < 1) return "";
+        int start = 0, end = 0;
+        for (int i = 0; i < s.length(); i++) {
+            int len1 = expandFromCenter(s, i, i);     // Odd length palindrome
+            int len2 = expandFromCenter(s, i, i + 1); // Even length palindrome
+            int len = Math.max(len1, len2);
+            if (len > end - start) {
+                start = i - (len - 1) / 2;
+                end = i + len / 2;
             }
         }
-        return s.substring(k, k + mx);
+        return s.substring(start, end + 1);
+    }
+
+    private static int expandFromCenter(String s, int left, int right) {
+        while (left >= 0 && right < s.length() && s.charAt(left) == s.charAt(right)) {
+            left--;
+            right++;
+        }
+        return right - left - 1;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(longestPalindrome("babad")); // Output: "bab" or "aba"
+        System.out.println(longestPalindrome("cbbd"));  // Output: "bb"
     }
 }
